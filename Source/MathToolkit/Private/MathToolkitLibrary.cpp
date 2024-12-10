@@ -167,3 +167,4 @@ float MathToolkitLibrary::calculateHorizontalFOV(float senzorWidth, float focalL
 {
   return FMath::RadiansToDegrees(2.0f * FMath::Atan(senzorWidth / (2.0f * focalLength)));
 }
+
