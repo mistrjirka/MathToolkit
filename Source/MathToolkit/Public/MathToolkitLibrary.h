@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Containers/CircularBuffer.h"
+#include "CircularBufferMT.h"
 
 
 /**
@@ -20,8 +20,8 @@ public:
 
     static FVector ConvertROSToUE(const FVector& ROSVector);
 
-    template <typename T>
-    static void calculateLinearFit(const TCircularBuffer<T>& circBuffer, FVector& vector_fit_a, FVector& vector_fit_b, bool print = false);
+    template <typename T, size_t S>
+    static void calculateLinearFit(const CircularBufferMT<T, S>& circBuffer, FVector& vector_fit_a, FVector& vector_fit_b, bool print = false);
 
     static std::pair<FVector,FVector> CalculateSphericalFromDepth(
         float distance, 
@@ -42,8 +42,8 @@ public:
     static float calculateHorizontalFOV(float senzorWidth, float focalLength);
 };
 
-template <typename T>
-void MathToolkitLibrary::calculateLinearFit(const TCircularBuffer<T>& circBuffer, FVector& vector_fit_a, FVector& vector_fit_b, bool print)
+template <typename T, size_t S>
+void MathToolkitLibrary::calculateLinearFit(const CircularBufferMT<T, S>& circBuffer, FVector& vector_fit_a, FVector& vector_fit_b, bool print)
 {
     double sum_x = 0.0;
     double sum_y[3] = {0.0, 0.0, 0.0};
@@ -51,10 +51,8 @@ void MathToolkitLibrary::calculateLinearFit(const TCircularBuffer<T>& circBuffer
     double sum_xx = 0.0;
     int n = 0;
 
-    // Calculate sums for regression
-    for (uint32 i = 0; i < circBuffer.Capacity(); ++i)
-    {
-        const auto& elem = circBuffer[i];
+    // Calculate sums for regression using the iterator
+    circBuffer.for_each([&](const T& elem) {
         double x = elem.Value;
         sum_x += x;
         sum_xx += x * x;
@@ -68,7 +66,7 @@ void MathToolkitLibrary::calculateLinearFit(const TCircularBuffer<T>& circBuffer
         sum_xy[2] += x * elem.Key.Z;
 
         n++;
-    }
+    });
 
     if (n < 2)
     {
