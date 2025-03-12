@@ -5,45 +5,40 @@
 
 FVector MathToolkitLibrary::ConvertROSToUE(const FVector &ROSVector)
 {
-  // Convert ROS coordinates (right-handed) to Unreal Engine coordinates (left-handed) and scale from cm to m
+  // Convert ROS coordinates (right-handed) to Unreal Engine coordinates (left-handed) and scale from m to cm
+  // ROS: X forward, Y left, Z up -> UE: X forward, Y right, Z up
   FVector UEVector;
-  UEVector.X = ROSVector.X*100.0f;
-  UEVector.Y = -ROSVector.Y*100.0f;
-  UEVector.Z = ROSVector.Z*100.0f;
+  UEVector.X = ROSVector.X * 100.0f;  // Scale from m to cm
+  UEVector.Y = -ROSVector.Y * 100.0f; // Flip Y axis
+  UEVector.Z = ROSVector.Z * 100.0f;  // Scale from m to cm
 
   return UEVector;
 }
 
 FRotator MathToolkitLibrary::ConvertROSToUEAngleDegree(const FRotator &rotation)
 {
-  // Convert ROS angles (right-handed) to Unreal Engine angles (left-handed) in radians
+  // Convert ROS angles (right-handed) to Unreal Engine angles (left-handed)
   FRotator UERotation;
-  UERotation.Pitch = -rotation.Pitch;
-  UERotation.Roll = rotation.Roll;
-  UERotation.Yaw = -rotation.Yaw;
-  if (UERotation.Yaw < 0)
-  {
-    UERotation.Yaw += 2 * PI;
-  }
-  if (UERotation.Pitch < 0)
-  {
-    UERotation.Pitch += 2 * PI;
-  }
-  if (UERotation.Roll < 0)
-  {
-    UERotation.Roll += 2 * PI;
-  }
+  UERotation.Pitch = rotation.Pitch;  // Keep pitch the same
+  UERotation.Roll = -rotation.Roll;   // Flip roll
+  UERotation.Yaw = -rotation.Yaw + 180.0f; // Flip yaw and add 180 degrees for proper orientation
+  
+  // Normalize angles to [0, 360)
+  UERotation.Pitch = FMath::Fmod(UERotation.Pitch + 360.0f, 360.0f);
+  UERotation.Roll = FMath::Fmod(UERotation.Roll + 360.0f, 360.0f);
+  UERotation.Yaw = FMath::Fmod(UERotation.Yaw + 360.0f, 360.0f);
 
   return UERotation;
 }
 
 FVector MathToolkitLibrary::ConvertUEToROS(const FVector &UEVector)
 {
-  // Convert Unreal Engine coordinates (left-handed) to ROS coordinates (right-handed)
+  // Convert Unreal Engine coordinates (left-handed) to ROS coordinates (right-handed) and scale from cm to m
+  // UE: X forward, Y right, Z up -> ROS: X forward, Y left, Z up
   FVector ROSVector;
-  ROSVector.X = UEVector.X/100.0f;
-  ROSVector.Y = -UEVector.Y/100.0f;
-  ROSVector.Z = UEVector.Z/100.0f;
+  ROSVector.X = UEVector.X / 100.0f;  // Scale from cm to m
+  ROSVector.Y = -UEVector.Y / 100.0f; // Flip Y axis
+  ROSVector.Z = UEVector.Z / 100.0f;  // Scale from cm to m
 
   return ROSVector;
 }
@@ -52,21 +47,14 @@ FVector MathToolkitLibrary::ConvertUEToROSAngleDegree(const FVector &rotation)
 {
   // Convert Unreal Engine angles (left-handed) to ROS angles (right-handed)
   FVector ROSRotation;
-  ROSRotation.X = -rotation.X;
-  ROSRotation.Y = rotation.Y;
-  ROSRotation.Z = -rotation.Z;
-  if (ROSRotation.Z < 0)
-  {
-    ROSRotation.Z += 360;
-  }
-  if (ROSRotation.X < 0)
-  {
-    ROSRotation.X += 360;
-  }
-  if (ROSRotation.Y < 0)
-  {
-    ROSRotation.Y += 360;
-  }
+  ROSRotation.X = rotation.X;         // Keep X (pitch) the same
+  ROSRotation.Y = -rotation.Y;        // Flip Y (roll)
+  ROSRotation.Z = -rotation.Z + 180.0f; // Flip Z (yaw) and add 180 degrees for proper orientation
+  
+  // Normalize angles to [0, 360)
+  ROSRotation.X = FMath::Fmod(ROSRotation.X + 360.0f, 360.0f);
+  ROSRotation.Y = FMath::Fmod(ROSRotation.Y + 360.0f, 360.0f);
+  ROSRotation.Z = FMath::Fmod(ROSRotation.Z + 360.0f, 360.0f);
 
   return ROSRotation;
 }
@@ -75,21 +63,14 @@ FRotator MathToolkitLibrary::ConvertUEToROSAngleDegree(const FRotator &rotation)
 {
   // Convert Unreal Engine angles (left-handed) to ROS angles (right-handed)
   FRotator ROSRotation;
-  ROSRotation.Pitch = -rotation.Pitch;
-  ROSRotation.Roll = rotation.Roll;
-  ROSRotation.Yaw = -rotation.Yaw;
-  if (ROSRotation.Yaw < 0)
-  {
-    ROSRotation.Yaw += 360;
-  }
-  if (ROSRotation.Pitch < 0)
-  {
-    ROSRotation.Pitch += 360;
-  }
-  if (ROSRotation.Roll < 0)
-  {
-    ROSRotation.Roll += 360;
-  }
+  ROSRotation.Pitch = rotation.Pitch;   // Keep pitch the same
+  ROSRotation.Roll = -rotation.Roll;    // Flip roll
+  ROSRotation.Yaw = -rotation.Yaw + 180.0f; // Flip yaw and add 180 degrees for proper orientation
+  
+  // Normalize angles to [0, 360)
+  ROSRotation.Pitch = FMath::Fmod(ROSRotation.Pitch + 360.0f, 360.0f);
+  ROSRotation.Roll = FMath::Fmod(ROSRotation.Roll + 360.0f, 360.0f);
+  ROSRotation.Yaw = FMath::Fmod(ROSRotation.Yaw + 360.0f, 360.0f);
 
   return ROSRotation;
 }
