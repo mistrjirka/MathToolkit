@@ -17,18 +17,7 @@ FVector MathToolkitLibrary::ConvertROSToUE(const FVector &ROSVector)
 
 FRotator MathToolkitLibrary::ConvertROSToUEAngleDegree(const FRotator &rotation)
 {
-  // Convert ROS angles (right-handed) to Unreal Engine angles (left-handed)
-  FRotator UERotation;
-  UERotation.Pitch = rotation.Pitch;  // Keep pitch the same
-  UERotation.Roll = -rotation.Roll;   // Flip roll
-  UERotation.Yaw = -rotation.Yaw; // Flip yaw and add 180 degrees for proper orientation
-  
-  // Normalize angles to [0, 360)
-  UERotation.Pitch = FMath::Fmod(UERotation.Pitch + 360.0f, 360.0f);
-  UERotation.Roll = FMath::Fmod(UERotation.Roll + 360.0f, 360.0f);
-  UERotation.Yaw = FMath::Fmod(UERotation.Yaw + 360.0f, 360.0f);
-
-  return UERotation;
+  return FRotator(FMath::Fmod(rotation.Pitch + 360.0f, 360.0f),  FMath::Fmod(-rotation.Roll + 360.0f, 360.0f),  FMath::Fmod((-rotation.Yaw)+ 360.0f, 360.0f));
 }
 
 FVector MathToolkitLibrary::ConvertUEToROS(const FVector &UEVector)
