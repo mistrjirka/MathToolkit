@@ -21,7 +21,7 @@ FRotator MathToolkitLibrary::ConvertROSToUEAngleDegree(const FRotator &rotation)
   FRotator UERotation;
   UERotation.Pitch = rotation.Pitch;  // Keep pitch the same
   UERotation.Roll = -rotation.Roll;   // Flip roll
-  UERotation.Yaw = -rotation.Yaw + 180.0f; // Flip yaw and add 180 degrees for proper orientation
+  UERotation.Yaw = -rotation.Yaw; // Flip yaw and add 180 degrees for proper orientation
   
   // Normalize angles to [0, 360)
   UERotation.Pitch = FMath::Fmod(UERotation.Pitch + 360.0f, 360.0f);
