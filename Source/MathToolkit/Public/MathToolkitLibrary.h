@@ -31,6 +31,15 @@ public:
         uint32 width,
         uint32 height
     );
+    static std::pair<FVector,FVector> CalculateSphericalFromDepth(
+        float distance, 
+        float x, 
+        float y, 
+        float tanHalfFOVHRad, 
+        float tanHalfFOVVRad,
+        uint32 width,
+        uint32 height
+    );
     
     static std::pair<float, float> CalculateNDCCoordinates(
     float alpha,

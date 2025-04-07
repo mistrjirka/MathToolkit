@@ -102,6 +102,36 @@ std::pair<FVector, FVector> MathToolkitLibrary::CalculateSphericalFromDepth(
     return std::pair<FVector, FVector>(spherical, point);
 }
 
+std::pair<FVector, FVector> MathToolkitLibrary::CalculateSphericalFromDepth(
+    float Depth,
+    float x,
+    float y,
+    float tanHalfFOVHRad,
+    float tanHalfFOVVRad,
+    uint32 width,
+    uint32 height)
+{
+    Depth *= 0.01f;
+
+    float NDC_X = (2.0f * x / width) - 1.0f;
+    float NDC_Y = 1.0f - (2.0f * y / height);
+
+    float CameraX = Depth;
+    float CameraY = NDC_X * Depth * tanHalfFOVHRad;
+    float CameraZ = NDC_Y * Depth * tanHalfFOVVRad;
+
+    FVector point(CameraX * 100.0f, CameraY * 100.0f, CameraZ * 100.0f);
+
+    float r = FMath::Sqrt(FMath::Square(point.X) + FMath::Square(point.Y) + FMath::Square(point.Z));
+    float vCoord = FMath::Acos(point.Z / r);
+    float hCoord = FMath::Atan2(point.Y, point.X);
+
+    vCoord = (PI / 2.0f) - vCoord;
+    FVector spherical(r, hCoord, vCoord);
+
+    return std::pair<FVector, FVector>(spherical, point);
+}
+
 
 
 std::pair<float, float> MathToolkitLibrary::CalculateNDCCoordinates(
