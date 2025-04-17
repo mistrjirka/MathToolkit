@@ -155,7 +155,7 @@ std::pair<float, float> MathToolkitLibrary::CalculateNDCCoordinates(
     
     // For ndc_x, you should use the appropriate formula. Assuming you need ndc_x as:
     float ndc_x = FMath::Sqrt(-((FMath::Square(sin_alpha) * FMath::Square(sin_beta)) / (FMath::Square(a) * (-1 + FMath::Square(cos_alpha) + FMath::Square(sin_alpha) * FMath::Square(sin_beta)))));    //UE_LOG(LogTemp, Warning, TEXT("COS_alpha: %f, SIN_alpha: %f, SIN_beta: %f, a: %f, b: %f"), cos_alpha, sin_alpha, sin_beta, a, b);
-    UE_LOG(LogTemp, Warning, TEXT("NDC: %f"), ndc_x);
+    //UE_LOG(LogTemp, Warning, TEXT("NDC: %f"), ndc_x);
 
     float x = (ndc_x + 1.0f) * width / 2.0f;
     float y = (1.0f - 0) * height / 2.0f;
